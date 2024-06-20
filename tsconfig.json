@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "rootDir": "./src",
+      "outDir": "./dist",
+      "esModuleInterop": true,
+      "strict": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "skipLibCheck": true, // Adicione esta linha para evitar verificações de tipo excessivamente rigorosas em bibliotecas de terceiros
+      "forceConsistentCasingInFileNames": true // Para garantir consistência no uso de maiúsculas/minúsculas nos nomes de arquivos
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+  }
+  
