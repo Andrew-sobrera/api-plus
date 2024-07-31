@@ -8,7 +8,9 @@ export interface ProductRepository {
 
     getOne(id: number): Promise<Product | null>
 
-    create(product: ProductCreate): Promise<Product>
+    create(product: ProductCreate): Promise<ProductCreate>
 
     update(product: ProductCreate, id: ID): Promise<Product>
+
+    destroy(id: ID): Promise<void>
 }

@@ -6,4 +6,10 @@ export interface ProductCreate {
     brand: string | undefined 
 }
 
-export interface Product extends ProductCreate{}
+export interface Product{
+    id: number | undefined
+    name: string | undefined 
+    price: number | undefined 
+    category_id?: number | undefined 
+    brand: string | undefined 
+}

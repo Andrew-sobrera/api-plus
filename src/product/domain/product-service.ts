@@ -35,4 +35,9 @@ export class ProductService {
         const productUpdate = await this.productRepository.update(product, id)
         return productUpdate
     }
+
+    async destroy(id: ID): Promise<void>{
+        await this.productRepository.destroy(id)
+        return
+    }
 }

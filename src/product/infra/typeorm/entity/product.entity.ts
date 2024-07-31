@@ -19,7 +19,7 @@ export class ProductEntity extends BaseEntity implements Product {
     price!: number
 
     @Column()
-    category!: string
+    category_id!: number
 
     @Column()
     brand!: string
