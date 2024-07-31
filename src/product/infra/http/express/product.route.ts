@@ -37,3 +37,12 @@ product.get('/products', async (req: Request, res: Response) => {
         console.log(error)
     }
  })
+
+ product.delete('/products/:id', async (req: Request, res: Response) => {
+    try {
+         ProductService.getInstance().destroy(req.params.id)
+        res.json().status(404)
+    } catch (error) {
+        console.log(error)
+    }
+ })
