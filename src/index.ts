@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import express, { Request, Response, NextFunction } from 'express';
-import { catalogRoutes } from './routes/catalogRoutes';
 import { BootstrapInit } from './common/bootstrap/bootstrap-init';
 import { productBootstrap } from './product/infra/bootstrap/product-bootstrap';
+import { product } from './product/infra/http/express/product.route';
 
 const bootstraps = async () => {
     await BootstrapInit.init([productBootstrap])
@@ -17,7 +17,7 @@ app.use(async (ctx: Request, response: Response, next: NextFunction) => {
     return next()
 })
 
-router.use(catalogRoutes)
+router.use(product)
 app.use(router)
 
 
