@@ -5,9 +5,11 @@ import { productBootstrap } from './product/infra/bootstrap/product-bootstrap';
 import { product } from './product/infra/http/express/product.route';
 import { categoryBootstrap } from './category/infra/bootstrap/category-bootstrap';
 import { category } from './category/infra/http/express/category-route';
+import { userBootstrap } from './user/infra/bootstrap/user-bootstrap';
+import { user } from './user/infra/http/express/user.route';
 
 const bootstraps = async () => {
-    await BootstrapInit.init([productBootstrap, categoryBootstrap])
+    await BootstrapInit.init([productBootstrap, categoryBootstrap, userBootstrap])
 }
 
 const app = express();
@@ -19,7 +21,7 @@ app.use(async (ctx: Request, response: Response, next: NextFunction) => {
     return next()
 })
 
-router.use(product, category)
+router.use(product, category, user)
 app.use(router)
 
 

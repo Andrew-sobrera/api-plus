@@ -10,6 +10,6 @@ export interface Product{
     id: number | undefined
     name: string | undefined 
     price: number | undefined 
-    category_id?: number | undefined 
+    category_id?: number | null
     brand: string | undefined 
 }
