@@ -22,6 +22,7 @@ category.get('/categories', async (req: Request, res: Response) => {
 
  category.post('/categories', async (req: Request, res: Response) => {
     try {
+      console.log('aqui')
      const categories = await CategoryService.getInstance().create(req.body)
      res.json(categories).status(200)
     } catch (error) {

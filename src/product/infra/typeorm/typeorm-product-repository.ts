@@ -3,7 +3,7 @@ import { ProductRepository } from "../../domain/product-repository";
 import { ProductEntity } from "./entity/product.entity";
 import { Product, ProductCreate } from "../../domain/product";
 import { CategoryEntity } from "../../../category/infra/typeorm/entity/category.entity";
-import { ID } from "../../../common/product/types";
+import { Category } from "../../../category/domain/category";
 
 export class TypeOrmProductRepository implements ProductRepository {
     constructor(protected ds: DataSource){}
@@ -23,28 +23,25 @@ export class TypeOrmProductRepository implements ProductRepository {
     }
 
     async create(product: ProductCreate): Promise<ProductCreate> {
-        const category = product.category
+        let category: any = 10
         let categoryEntity
-        categoryEntity = await this.ds.getRepository(CategoryEntity).findOne({
-            where: {
-                name: product.category
-            }
-        });
-        if(categoryEntity == null){
-            const categoryRepository = this.ds.getRepository(CategoryEntity)
-            const categoryCreate = categoryRepository.create({name: category}) 
-            categoryEntity = await categoryRepository.save(categoryCreate)
+        
+        if(product.category != null){
+            categoryEntity = await this.createOrAddCategoryProduct(product.category)
+            category = categoryEntity.id
         }
 
         const productRepository = this.ds.getRepository(ProductEntity)
-        const productCreate = productRepository.create({name: product.name, price: product.price, category_id: categoryEntity.id, brand: product.brand}) 
+        console.log(category)
+        const productCreate = productRepository.create({name: product.name, price: product.price, category_id: category, brand: product.brand}) 
         await productRepository.save(productCreate)
         return {
             id: productCreate.id,
             name: productCreate.name,
+            brand: productCreate.brand,
             price: productCreate.price,
-            category: categoryEntity.name,
-            brand: productCreate.brand
+            category: categoryEntity?.name || 'Padrão'
+
         }
     }
 
@@ -74,5 +71,22 @@ export class TypeOrmProductRepository implements ProductRepository {
         }
 
         await productRepository.delete(id);
+    }
+
+    private async createOrAddCategoryProduct(category: string): Promise<Category>{
+
+        let categoryEntity = await this.ds.getRepository(CategoryEntity).findOne({
+            where: {
+                name: category
+            }
+        });
+
+        if(categoryEntity == null){
+            const categoryRepository = this.ds.getRepository(CategoryEntity)
+            const categoryCreate = categoryRepository.create({name: category}) 
+            categoryEntity = await categoryRepository.save(categoryCreate)
+        }
+
+        return categoryEntity
     }
 }
