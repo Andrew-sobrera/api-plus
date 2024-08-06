@@ -11,7 +11,7 @@
       "skipLibCheck": true, // Adicione esta linha para evitar verificações de tipo excessivamente rigorosas em bibliotecas de terceiros
       "forceConsistentCasingInFileNames": true // Para garantir consistência no uso de maiúsculas/minúsculas nos nomes de arquivos
     },
-    "include": ["src"],
+    "include": ["src", "express.d.ts"],
     "exclude": ["node_modules"]
   }
   

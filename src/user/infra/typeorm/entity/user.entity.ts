@@ -20,4 +20,7 @@ export class UserEntity extends BaseEntity implements User {
 
     @Column()
     token!: string
+
+    @Column()
+    shop_id!: number
 }
