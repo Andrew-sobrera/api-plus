@@ -32,7 +32,6 @@ export class TypeOrmProductRepository implements ProductRepository {
         }
 
         const productRepository = this.ds.getRepository(ProductEntity)
-        console.log(category)
         const productCreate = productRepository.create({name: product.name, price: product.price, category_id: category, brand: product.brand}) 
         await productRepository.save(productCreate)
         return {
