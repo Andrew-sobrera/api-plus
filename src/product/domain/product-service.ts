@@ -1,6 +1,6 @@
 import { container, inject, injectable } from 'tsyringe'
 import { PRODUCT_REPOSITORY, ProductRepository } from './product-repository'
-import { Product, ProductCreate } from './product'
+import { Product, ProductCreate, ProductResource } from './product'
 import { ID } from '../../common/product/types'
 
 export const PRODUCT_SERVICE = 'ProductService'
@@ -26,7 +26,7 @@ export class ProductService {
         return product
     }
 
-    async create(product: ProductCreate): Promise<Product>{
+    async create(product: ProductCreate): Promise<ProductResource>{
         const productCreate = await this.productRepository.create(product)
         return productCreate
     }
