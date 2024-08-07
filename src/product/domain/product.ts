@@ -12,7 +12,7 @@ export interface Product{
     id: number | undefined
     name: string | undefined 
     price: number | undefined 
-    category_id?: number | null
+    category_id?: number | null | undefined
     brand: string | undefined 
 }
 

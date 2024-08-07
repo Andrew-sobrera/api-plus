@@ -31,9 +31,9 @@ export class ProductService {
         return productCreate
     }
 
-    async update(product: ProductCreate, id: ID): Promise<Product>{
+    async update(product: ProductCreate, id: ID): Promise<void>{
         const productUpdate = await this.productRepository.update(product, id)
-        return productUpdate
+        return
     }
 
     async destroy(id: ID): Promise<void>{

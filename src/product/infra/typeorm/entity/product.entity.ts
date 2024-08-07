@@ -21,7 +21,7 @@ export class ProductEntity extends BaseEntity implements Product {
     price!: number;
 
     @Column()
-    category_id!: number;
+    category_id!: number | null;
 
     @Column()
     brand!: string;

@@ -8,16 +8,26 @@ import { Category } from "../../../category/domain/category";
 export class TypeOrmProductRepository implements ProductRepository {
     constructor(protected ds: DataSource){}
     
-    async getOne(id: number): Promise<Product | null> {
-        const product = await this.ds.getRepository(ProductEntity).findOne({
-            where: {
-                id:id
-            }
-        });
-        return product
+    async getOne(id: number): Promise<ProductResource | null> {
+        const productRepository = await this.ds.getRepository(ProductEntity);
+        
+        const product = await productRepository.createQueryBuilder('product')
+            .leftJoinAndSelect('product.category', 'category')
+            .select([
+                'product.id',
+                'product.name',
+                'product.price',
+                'product.brand',
+                'category.id',
+                'category.name'
+            ])
+            .where('product.id = :id', {id:id})
+            .getOne();
+        
+        return product;
     }
 
-    async getAll(): Promise<Partial<Product>[]> {
+    async getAll(): Promise<Product[]> {
         const productRepository = await this.ds.getRepository(ProductEntity);
         
         const products = await productRepository.createQueryBuilder('product')
@@ -45,32 +55,35 @@ export class TypeOrmProductRepository implements ProductRepository {
         }
 
         const productRepository = this.ds.getRepository(ProductEntity)
-        const productCreate = productRepository.create({name: product.name, price: product.price, category_id: category, brand: product.brand}) 
-        await productRepository.save(productCreate)
-        return {
-            id: productCreate.id,
-            name: productCreate.name,
-            brand: productCreate.brand,
-            price: productCreate.price,
-            category: categoryEntity
-
-        }
+        const productCreate = productRepository.create({name: product.name, price: product.price, category_id: category, brand: product.brand})
+        await productRepository.save(productCreate) 
+        const newProduct = await this.getOne(productCreate.id)
+        return { 
+            id: newProduct?.id, 
+            name: newProduct?.name,
+            price: newProduct?.price,
+            brand: newProduct?.brand,
+            category: newProduct?.category
+         }
     }
 
-    async update(productData: ProductCreate, id: number): Promise<Product | void> {
-        // const productRepository = this.ds.getRepository(ProductEntity);
-    
-        // const product = await productRepository.findOneBy({ id });
+    async update(productData: Product, id: number): Promise<ProductResource | null> {
+        const productRepository = this.ds.getRepository(ProductEntity);
 
-        // if (!product) {
-        //     throw new Error(`Product with id ${id} not found`);
-        // }
+        let product = await this.getOne(id)
 
-        // const updatedProduct = { ...product, ...productData };
+        if (!product) {
+            throw new Error(`Product with id ${id} not found`);
+        }
+        
+        await productRepository.createQueryBuilder('product')
+            .update()
+            .set({name: productData.name, price: productData.price, brand: productData.brand, category_id: productData.category_id })
+            .where('products.id = :id', { id : id })
+            .execute()
 
-        // await productRepository.save(updatedProduct);
-
-        // return updatedProduct;
+        product = await this.getOne(id)
+        return product;
     }
 
     async destroy(id: number): Promise<void> {
