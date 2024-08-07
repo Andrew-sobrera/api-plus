@@ -31,8 +31,9 @@ product.get('/products', async (req: Request, res: Response) => {
 
  product.put('/products/:id', async (req: Request, res: Response) => {
     try {
-        const productUpdate = await ProductService.getInstance().update(req.body, req.params.id)
-        res.json(productUpdate)
+        const id = Number(req.params.id)
+        const productUpdate = await ProductService.getInstance().update(req.body, id)
+        res.json().status(201)
     } catch (error) {
         console.log(error)
     }
@@ -40,7 +41,8 @@ product.get('/products', async (req: Request, res: Response) => {
 
  product.delete('/products/:id', async (req: Request, res: Response) => {
     try {
-         ProductService.getInstance().destroy(req.params.id)
+        const id = Number(req.params.id)
+         ProductService.getInstance().destroy(id)
         res.json().status(404)
     } catch (error) {
         console.log(error)
