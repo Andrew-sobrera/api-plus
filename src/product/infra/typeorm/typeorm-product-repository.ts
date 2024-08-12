@@ -4,22 +4,27 @@ import { ProductEntity } from "./entity/product.entity";
 import { Product, ProductCreate, ProductResource } from "../../domain/product";
 import { CategoryEntity } from "../../../category/infra/typeorm/entity/category.entity";
 import { Category } from "../../../category/domain/category";
+import { Brand } from "../../../brand/domain/brand";
+import { BrandEntity } from "../../../brand/infra/typeorm/entity/brand.entity";
 
 export class TypeOrmProductRepository implements ProductRepository {
     constructor(protected ds: DataSource){}
     
-    async getOne(id: number): Promise<ProductResource | null> {
+    async getOne(id: number): Promise<any> {
         const productRepository = await this.ds.getRepository(ProductEntity);
         
         const product = await productRepository.createQueryBuilder('product')
             .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.brand', 'brand')
             .select([
                 'product.id',
                 'product.name',
                 'product.price',
                 'product.brand',
                 'category.id',
-                'category.name'
+                'category.name',
+                'brand.id',
+                'brand.name',
             ])
             .where('product.id = :id', {id:id})
             .getOne();
@@ -32,13 +37,16 @@ export class TypeOrmProductRepository implements ProductRepository {
         
         const products = await productRepository.createQueryBuilder('product')
             .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.brand', 'brand')
             .select([
                 'product.id',
                 'product.name',
                 'product.price',
                 'product.brand',
                 'category.id',
-                'category.name'
+                'category.name',
+                'brand.id',
+                'brand.name'
             ])
             .getMany();
         
@@ -48,6 +56,14 @@ export class TypeOrmProductRepository implements ProductRepository {
     async create(product: ProductCreate): Promise<ProductResource> {
         let category: any = 10
         let categoryEntity
+
+        let brand: any = 10
+        let brandEntity
+
+        if(product.brand != null){
+            brandEntity = await this.createOrAddBrandProduct(product.brand)
+            brand = brandEntity.id
+        }
         
         if(product.category != null){
             categoryEntity = await this.createOrAddCategoryProduct(product.category)
@@ -55,7 +71,7 @@ export class TypeOrmProductRepository implements ProductRepository {
         }
 
         const productRepository = this.ds.getRepository(ProductEntity)
-        const productCreate = productRepository.create({name: product.name, price: product.price, category_id: category, brand: product.brand})
+        const productCreate = productRepository.create({name: product.name, price: product.price, category_id: category, brand_id: brand})
         await productRepository.save(productCreate) 
         const newProduct = await this.getOne(productCreate.id)
         return { 
@@ -78,7 +94,7 @@ export class TypeOrmProductRepository implements ProductRepository {
         
         await productRepository.createQueryBuilder('product')
             .update()
-            .set({name: productData.name, price: productData.price, brand: productData.brand, category_id: productData.category_id })
+            .set({name: productData.name, price: productData.price, brand_id: productData.brand_id, category_id: productData.category_id })
             .where('products.id = :id', { id : id })
             .execute()
 
@@ -113,5 +129,22 @@ export class TypeOrmProductRepository implements ProductRepository {
         }
 
         return categoryEntity
+    }
+
+    private async createOrAddBrandProduct(brand: string): Promise<Brand>{
+
+        let brandEntity = await this.ds.getRepository(BrandEntity).findOne({
+            where: {
+                name: brand
+            }
+        });
+
+        if(brandEntity == null){
+            const brandRepository = this.ds.getRepository(BrandEntity)
+            const brandCreate = brandRepository.create({name: brand}) 
+            brandEntity = await brandRepository.save(brandCreate)
+        }
+
+        return brandEntity
     }
 }

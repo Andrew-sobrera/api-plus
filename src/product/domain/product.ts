@@ -1,3 +1,4 @@
+import { Brand } from "../../brand/domain/brand"
 import { Category } from "../../category/domain/category"
 
 export interface ProductCreate {
@@ -13,7 +14,7 @@ export interface Product{
     name: string | undefined 
     price: number | undefined 
     category_id?: number | null | undefined
-    brand: string | undefined 
+    brand_id?: number | undefined | null
 }
 
 export interface ProductResource {
@@ -21,5 +22,5 @@ export interface ProductResource {
     name: string | undefined 
     price: number | undefined 
     category?: Category 
-    brand: string | undefined 
+    brand?: Brand
 }

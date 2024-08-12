@@ -9,10 +9,12 @@ import { userBootstrap } from './user/infra/bootstrap/user-bootstrap';
 import { user } from './user/infra/http/express/user.route';
 import { authMiddleware } from './common/http/express/auth-middleware'
 import { authBootstrap } from './auth/infra/bootstrap/auth-bootstrap';
+import { brandBootstrap } from './brand/infra/bootstrap/brand-bootstrap';
+import { brand } from './brand/infra/http/express/brand-route';
 
 
 export async function main() {
-  await BootstrapInit.init([productBootstrap, categoryBootstrap, userBootstrap, authBootstrap]);
+  await BootstrapInit.init([productBootstrap, categoryBootstrap, userBootstrap, authBootstrap, brandBootstrap]);
 
   const app = express();
   const router = express.Router();
@@ -22,7 +24,7 @@ export async function main() {
   
   app.use(authMiddleware);
   
-  router.use(product, category, user);
+  router.use(product, category, user, brand);
   app.use(router);
 
   app.listen(3000, () => {

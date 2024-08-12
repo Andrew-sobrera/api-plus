@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Product } from '../../../domain/product';
 import { CategoryEntity } from '../../../../category/infra/typeorm/entity/category.entity';
+import { BrandEntity } from '../../../../brand/infra/typeorm/entity/brand.entity';
 
 @Entity('products')
 export class ProductEntity extends BaseEntity implements Product {
@@ -24,9 +25,13 @@ export class ProductEntity extends BaseEntity implements Product {
     category_id!: number | null;
 
     @Column()
-    brand!: string;
+    brand_id!: number | null;
 
     @ManyToOne(() => CategoryEntity, category => category.products)
-    @JoinColumn({ name: 'category_id' })  // Especifica a coluna de chave estrangeira
+    @JoinColumn({ name: 'category_id' })
     category!: CategoryEntity;
+
+    @ManyToOne(() => BrandEntity, brand => brand.products)
+    @JoinColumn({ name: 'brand_id' })
+    brand!: BrandEntity;
 }
